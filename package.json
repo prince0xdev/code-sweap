@@ -1,6 +1,11 @@
 {
   "name": "codesweep",
   "displayName": "CodeSweep",
+  "publisher": "prince0xdev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prince0xdev/code-sweap"
+  },
   "description": "Remove and uncomment your code in one click. Supports multiple languages including HTML.",
   "version": "0.0.1",
   "engines": {
@@ -8,6 +13,11 @@
   },
   "categories": [
     "Formatters"
+  ],
+  "activationEvents": [
+    "onCommand:extension.removeAllComments",
+    "onCommand:extension.removeSingleLineComments",
+    "onCommand:extension.removeMultilineComments"
   ],
   "main": "./out/extension.js",
   "contributes": {
