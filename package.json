@@ -7,7 +7,7 @@
     "url": "https://github.com/prince0xdev/code-sweap"
   },
   "description": "Remove and uncomment your code in one click. Supports multiple languages including HTML.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.101.0"
   },
