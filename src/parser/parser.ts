@@ -27,29 +27,44 @@ export class Parser {
   }
 
   public FindSingleLineComments(activeEditor: vscode.TextEditor): any {
-    for (let l = 0; l < activeEditor.document.lineCount; l++) {
-      const line = activeEditor.document.lineAt(l);
-      const lineText = line.text;
+  for (let l = 0; l < activeEditor.document.lineCount; l++) {
+    const line = activeEditor.document.lineAt(l);
+    const lineText = line.text;
 
-      let matched = false;
-      for (let i = 0; i < this.delimiters.length && !matched; i++) {
-        const delimiter = this.delimiters[i];
+    let matched = false;
+    for (let i = 0; i < this.delimiters.length && !matched; i++) {
+      const delimiter = this.delimiters[i];
 
-        const cleanedLine = this.removeCommentOutsideString(
-          lineText,
-          delimiter
-        );
+      const cleanedLine = this.removeCommentOutsideString(
+        lineText,
+        delimiter
+      );
 
-        if (cleanedLine !== lineText) {
+      if (cleanedLine !== lineText) {
+        if (cleanedLine.trim() === "") {
+          // Entire line is comment → delete whole line including line break if possible
+          const startPos = new vscode.Position(l, 0);
+          let endPos: vscode.Position;
+          if (l < activeEditor.document.lineCount - 1) {
+            endPos = new vscode.Position(l + 1, 0);
+          } else {
+            endPos = new vscode.Position(l, lineText.length);
+          }
+          const range = new vscode.Range(startPos, endPos);
+          this.edit.delete(this.uri, range);
+        } else {
+          // Delete only the comment part and trailing spaces
           const startPos = new vscode.Position(l, cleanedLine.length);
           const endPos = new vscode.Position(l, lineText.length);
           const range = new vscode.Range(startPos, endPos);
           this.edit.delete(this.uri, range);
-          matched = true;
         }
+        matched = true;
       }
     }
   }
+}
+
 
   public removeCommentOutsideString(
     lineText: string,
@@ -84,7 +99,13 @@ export class Parser {
   }
 
   public FindMultilineComments(activeEditor: vscode.TextEditor): void {
-  if (this.languageCode === "html" || this.languageCode === "xml" || this.languageCode === "markdown" || this.languageCode === "vue" || this.languageCode === "svelte") {
+  if (
+    this.languageCode === "html" ||
+    this.languageCode === "xml" ||
+    this.languageCode === "markdown" ||
+    this.languageCode === "vue" ||
+    this.languageCode === "svelte"
+  ) {
     this.FindHtmlComments(activeEditor.document);
     return;
   }
@@ -94,16 +115,31 @@ export class Parser {
 
   let text = activeEditor.document.getText();
   let uri = activeEditor.document.uri;
-  let regEx: RegExp = /\/\*[\s\S]*?\*\//gm; // Regex plus correcte pour /* ... */
+  let regEx: RegExp = /\/\*[\s\S]*?\*\//gm; // Regex for /* ... */
   let match: RegExpExecArray | null;
 
   while ((match = regEx.exec(text))) {
     let startPos = activeEditor.document.positionAt(match.index);
     let endPos = activeEditor.document.positionAt(match.index + match[0].length);
-    let range = new vscode.Range(startPos, endPos);
+
+    // If the start line is empty after removal, extend deletion to the line break
+    const lineText = activeEditor.document.lineAt(startPos.line).text;
+    let range: vscode.Range;
+
+    if (lineText.trim() === "") {
+      if (startPos.line < activeEditor.document.lineCount - 1) {
+        range = new vscode.Range(startPos, new vscode.Position(startPos.line + 1, 0));
+      } else {
+        range = new vscode.Range(startPos, endPos);
+      }
+    } else {
+      range = new vscode.Range(startPos, endPos);
+    }
+
     this.edit.delete(uri, range);
   }
 }
+
 
   private FindHtmlComments(document: vscode.TextDocument): void {
   const startPattern = "<!--";
@@ -120,12 +156,12 @@ export class Parser {
       if (startIdx !== -1) {
         const endIdx = text.indexOf(endPattern, startIdx + startPattern.length);
         if (endIdx !== -1) {
-          // Commentaire sur une seule ligne
+          // Single line comment
           const startPos = new vscode.Position(lineIndex, startIdx);
           const endPos = new vscode.Position(lineIndex, endIdx + endPattern.length);
           this.edit.delete(this.uri, new vscode.Range(startPos, endPos));
         } else {
-          // Début de commentaire multi-lignes
+          // Start of multiline comment
           commentStartPos = new vscode.Position(lineIndex, startIdx);
           insideComment = true;
         }
@@ -134,7 +170,22 @@ export class Parser {
       const endIdx = text.indexOf(endPattern);
       if (endIdx !== -1 && commentStartPos) {
         const endPos = new vscode.Position(lineIndex, endIdx + endPattern.length);
-        this.edit.delete(this.uri, new vscode.Range(commentStartPos, endPos));
+
+        // If start line is empty after removal, extend deletion to line break
+        const startLineText = document.lineAt(commentStartPos.line).text;
+        let range: vscode.Range;
+
+        if (startLineText.trim() === "") {
+          if (commentStartPos.line < document.lineCount - 1) {
+            range = new vscode.Range(commentStartPos, new vscode.Position(commentStartPos.line + 1, 0));
+          } else {
+            range = new vscode.Range(commentStartPos, endPos);
+          }
+        } else {
+          range = new vscode.Range(commentStartPos, endPos);
+        }
+
+        this.edit.delete(this.uri, range);
         insideComment = false;
         commentStartPos = null;
       }
@@ -142,87 +193,114 @@ export class Parser {
   }
 }
 
-
-  public FindDebugStatements(activeEditor: vscode.TextEditor): void {
-    const text = activeEditor.document.getText();
-    const uri = activeEditor.document.uri;
-
-    // Expressions à supprimer par langage (tu pourras en ajouter)
-    const debugPatterns: { [key: string]: RegExp[] } = {
-      javascript: [
-        /console\.(log|warn|error|debug|info|trace)\s*\(.*?\);?/g,
-        /\bdebugger\b;?/g,
-      ],
-      typescript: [
-        /console\.(log|warn|error|debug|info|trace)\s*\(.*?\);?/g,
-        /\bdebugger\b;?/g,
-      ],
-      javascriptreact: [
-        /console\.(log|warn|error|debug|info|trace)\s*\(.*?\);?/g,
-        /\bdebugger\b;?/g,
-      ],
-      typescriptreact: [
-        /console\.(log|warn|error|debug|info|trace)\s*\(.*?\);?/g,
-        /\bdebugger\b;?/g,
-      ],
-      python: [/\bprint\s*\(.*?\)/g, /\bpprint\.pprint\s*\(.*?\)/g],
-      java: [
-        /System\.out\.println\s*\(.*?\);?/g,
-        /System\.err\.println\s*\(.*?\);?/g,
-      ],
-      c: [/printf\s*\(.*?\);?/g],
-      cpp: [/printf\s*\(.*?\);?/g, /std::cout\s*<<[^;]+;/g],
-      csharp: [
-        /Console\.Write(Line)?\s*\(.*?\);?/g,
-        /Debug\.Write(Line)?\s*\(.*?\);?/g,
-      ],
-      php: [
-        /echo\s+["'`].*?["'`];?/g,
-        /print\s*\(?.*?\)?;?/g,
-        /var_dump\s*\(.*?\);?/g,
-        /print_r\s*\(.*?\);?/g,
-      ],
-      ruby: [/\bputs\s+.*$/g, /\bp\s+.*$/g],
-      go: [
-        /fmt\.Println\s*\(.*?\)/g,
-        /fmt\.Printf\s*\(.*?\)/g,
-        /log\.(Print|Printf|Println|Fatal|Fatalf|Fataln|Panic|Panicf|Panicln)\s*\(.*?\)/g,
-      ],
-      dart: [/print\s*\(.*?\);?/g, /debugPrint\s*\(.*?\);?/g],
-      kotlin: [/println\s*\(.*?\)/g, /Log\.(d|e|i|v|w)\s*\(.*?\)/g],
-      swift: [/print\s*\(.*?\)/g, /NSLog\s*\(.*?\)/g],
-      rust: [/println!\s*!\s*\(.*?\);?/g, /eprintln!\s*!\s*\(.*?\);?/g],
-      scala: [/println\s*\(.*?\)/g],
-      shellscript: [/echo\s+.*$/g],
-      powershell: [
-        /Write-Host\s+.*$/g,
-        /Write-Output\s+.*$/g,
-        /Write-Debug\s+.*$/g,
-      ],
-    };
-
-    const language = this.languageCode;
-    const patterns = debugPatterns[language];
-
-    if (!patterns) {
-      vscode.window.showInformationMessage(
-        `No debug logs defined for language "${language}"`
+  
+  public RemoveEmptyLines(activeEditor: vscode.TextEditor) {
+  const uri = activeEditor.document.uri;
+  for (let line = activeEditor.document.lineCount - 1; line >= 0; line--) {
+    const lineText = activeEditor.document.lineAt(line).text;
+    if (lineText.trim() === "") {
+      // remove empty lines
+      const range = new vscode.Range(
+        new vscode.Position(line, 0),
+        new vscode.Position(line + 1, 0)
       );
-      return;
-    }
-
-    for (const pattern of patterns) {
-      let match: RegExpExecArray | null;
-      while ((match = pattern.exec(text)) !== null) {
-        const startPos = activeEditor.document.positionAt(match.index);
-        const endPos = activeEditor.document.positionAt(
-          match.index + match[0].length
-        );
-        const range = new vscode.Range(startPos, endPos);
-        this.edit.delete(uri, range);
-      }
+      this.edit.delete(uri, range);
     }
   }
+}
+
+
+  public FindDebugStatements(activeEditor: vscode.TextEditor): void {
+  const text = activeEditor.document.getText();
+  const uri = activeEditor.document.uri;
+
+  const debugPatterns: { [key: string]: RegExp[] } = {
+    javascript: [
+      /console\.(log|warn|error|debug|info|trace)\s*\(.*?\);?/g,
+      /\bdebugger\b;?/g,
+    ],
+    typescript: [
+      /console\.(log|warn|error|debug|info|trace)\s*\(.*?\);?/g,
+      /\bdebugger\b;?/g,
+    ],
+    javascriptreact: [
+      /console\.(log|warn|error|debug|info|trace)\s*\(.*?\);?/g,
+      /\bdebugger\b;?/g,
+    ],
+    typescriptreact: [
+      /console\.(log|warn|error|debug|info|trace)\s*\(.*?\);?/g,
+      /\bdebugger\b;?/g,
+    ],
+    python: [/\bprint\s*\(.*?\)/g, /\bpprint\.pprint\s*\(.*?\)/g],
+    java: [
+      /System\.out\.println\s*\(.*?\);?/g,
+      /System\.err\.println\s*\(.*?\);?/g,
+    ],
+    c: [/printf\s*\(.*?\);?/g],
+    cpp: [/printf\s*\(.*?\);?/g, /std::cout\s*<<[^;]+;/g],
+    csharp: [
+      /Console\.Write(Line)?\s*\(.*?\);?/g,
+      /Debug\.Write(Line)?\s*\(.*?\);?/g,
+    ],
+    php: [
+      /echo\s+["'`].*?["'`];?/g,
+      /print\s*\(?.*?\)?;?/g,
+      /var_dump\s*\(.*?\);?/g,
+      /print_r\s*\(.*?\);?/g,
+    ],
+    ruby: [/\bputs\s+.*$/g, /\bp\s+.*$/g],
+    go: [
+      /fmt\.Println\s*\(.*?\)/g,
+      /fmt\.Printf\s*\(.*?\)/g,
+      /log\.(Print|Printf|Println|Fatal|Fatalf|Fataln|Panic|Panicf|Panicln)\s*\(.*?\)/g,
+    ],
+    dart: [/print\s*\(.*?\);?/g, /debugPrint\s*\(.*?\);?/g],
+    kotlin: [/println\s*\(.*?\)/g, /Log\.(d|e|i|v|w)\s*\(.*?\)/g],
+    swift: [/print\s*\(.*?\)/g, /NSLog\s*\(.*?\)/g],
+    rust: [/println!\s*!\s*\(.*?\);?/g, /eprintln!\s*!\s*\(.*?\);?/g],
+    scala: [/println\s*\(.*?\)/g],
+    shellscript: [/echo\s+.*$/g],
+    powershell: [
+      /Write-Host\s+.*$/g,
+      /Write-Output\s+.*$/g,
+      /Write-Debug\s+.*$/g,
+    ],
+  };
+
+  const language = this.languageCode;
+  const patterns = debugPatterns[language];
+
+  if (!patterns) {
+    vscode.window.showInformationMessage(
+      `No debug logs defined for language "${language}"`
+    );
+    return;
+  }
+
+  for (const pattern of patterns) {
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(text)) !== null) {
+      const startPos = activeEditor.document.positionAt(match.index);
+      const endPos = activeEditor.document.positionAt(match.index + match[0].length);
+
+      // Check if the entire line is debug code, then extend deletion to next line break
+      const lineText = activeEditor.document.lineAt(startPos.line).text;
+      let range: vscode.Range;
+
+      if (
+        lineText.trim() === match[0].trim() &&
+        startPos.line < activeEditor.document.lineCount - 1
+      ) {
+        range = new vscode.Range(startPos, new vscode.Position(startPos.line + 1, 0));
+      } else {
+        range = new vscode.Range(startPos, endPos);
+      }
+
+      this.edit.delete(uri, range);
+    }
+  }
+}
+
 
   private setDelimiter(languageCode: string): boolean {
     this.supportedLanguage = true;
