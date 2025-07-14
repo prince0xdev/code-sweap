@@ -1,4 +1,8 @@
 # 🧹 CodeSweep
+![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/prince0xdev.codesweep)
+![Marketplace Version](https://img.shields.io/badge/VSCode-v0.0.2-blue?logo=visualstudiocode)
+![GitHub Repo stars](https://img.shields.io/github/stars/prince0xdev/code-sweap?style=social)
+![GitHub forks](https://img.shields.io/github/forks/prince0xdev/code-sweap?style=social)
 
 **CodeSweep** is a lightweight, open-source VS Code extension that helps you **clean your code** by removing all comments and debug logs in one click.
 

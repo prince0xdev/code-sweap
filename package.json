@@ -20,6 +20,7 @@
     "onCommand:extension.removeMultilineComments"
   ],
   "main": "./out/extension.js",
+  "icon": "icon.png",
   "contributes": {
     "configuration": {
       "title": "Remove Comments Configuration",
