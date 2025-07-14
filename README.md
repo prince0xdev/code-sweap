@@ -12,17 +12,16 @@
 - 🧼 Remove all **multi-line comments** (`/* ... */`, `<!-- ... -->`, etc.)
 - 🐞 Clean up **debug statements** like `console.log`, `print()`, `System.out.println`, etc.
 - 🌐 Supports 30+ popular languages (JavaScript, HTML, Python, PHP, C++, etc.)
-- 🚀 Simple to use, fast and effective
+- ⚡ Simple, fast, and effective
 
 ---
 
 ## 📦 Installation
 
-1. Go to the [VS Code Marketplace](https://marketplace.visualstudio.com/)
-2. Search for `CodeSweep`
-3. Click **Install**
+1. Open the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=prince0xdev.codesweep)
+2. Click **Install**
 
-Or install via command palette:
+Or install via the VS Code command palette:
 
 
 ---
@@ -32,9 +31,117 @@ Or install via command palette:
 - Open any code file
 - Press `Ctrl+Shift+P` or `Cmd+Shift+P` on Mac
 - Type and run: `CodeSweep: Clean Code`
-- 💥 Done! Comments and debug logs are gone.
+- 💥 Done! Comments and debug logs are gone
+
 
 ---
+
+# 🧩 Available Commands
+
+CodeSweep offers 4 useful commands. You can access them all via the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac).
+
+---
+
+### 🔹 CodeSweep: Clean Code
+
+```bash
+codesweep.cleanCode
+````
+
+✅ **Recommended Command** – Runs a full cleanup of your code.
+
+This command executes:
+
+* Remove Multiline Comments
+* Remove Debug Logs
+
+Ideal before pushing to production or sharing your code.
+
+---
+
+### 🔹 CodeSweep: Remove All Comments
+
+```bash
+codesweep.removeAllComments
+```
+
+✅ Removes all single-line and multi-line comments from the entire file.
+
+**Examples removed:**
+
+```js
+// This comment is gone
+/* This too */
+/*
+Multi-line
+block removed
+*/
+<!-- This in HTML is also removed -->
+```
+
+---
+
+### 🔹 CodeSweep: Remove Single Line Comments
+
+```bash
+codesweep.removeSingleLineComments
+```
+
+✅ Only removes single-line comments, preserving multiline ones.
+
+**Examples removed:**
+
+```py
+# A Python comment
+// A JS comment
+-- A SQL comment
+```
+
+---
+
+### 🔹 CodeSweep: Remove Multiline Comments
+
+```bash
+codesweep.removeMultilineComments
+```
+
+✅ Removes only multi-line comments, useful when you want to preserve inline hints.
+
+**Examples removed:**
+
+```js
+/*
+  This block is gone
+*/
+// This one stays
+```
+
+```html
+<!-- HTML-style comments are removed -->
+```
+
+---
+
+### 🔹 CodeSweep: Remove Debug Logs
+
+```bash
+codesweep.removeDebugLogs
+```
+
+✅ Detects and removes debug logs like:
+
+```js
+console.log("Hello")
+print("Debug")
+System.out.println("Trace")
+debugger;
+
+```
+
+And many more, depending on language.
+
+Helps prevent accidental debug logs in production code.
+
 
 ## 💻 Supported Languages
 
@@ -46,29 +153,34 @@ Includes but not limited to:
 
 ---
 
-## 🧠 Why CodeSweap?
+## 🧠 Why CodeSweep?
 
-Because no one likes to ship `console.log("hello")` or unused comments to production 😉  
-CodeSweep makes it easy to keep your codebase clean and professional.
+Because no one wants to ship `console.log("hello")` or outdated comments to production 😉  
+CodeSweep helps keep your codebase **clean, professional, and production-ready**.
 
 ---
 
 ## 🤝 Contributing
-Contributing is not available now ! Please be patient
+Contributions are now open!  
+- 📖 Please read our [Contribution Guide](/CONTRIBUTING.md)  
+- 🐛 Found a bug or have a suggestion? [Open an issue](https://github.com/prince0xdev/code-sweap/issues)
+Thank you for helping make CodeSweep better! 🙌
 
 ---
 
 ## 📜 License
 
-MIT License – free to use, modify, and contribute.
-
----
-
-## 📦 VS Code Marketplace (Coming Soon)
-
-> You’ll be able to install CodeSweep directly from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/).
+MIT License – free to use, modify, and distribute.
 
 ---
 
 ## 🧪 Demo
-(Demo comming soon!)
+
+> Gif demo coming soon!
+![CodeSweep Demo](./assets/screenshot.png)
+
+---
+
+## 🧩 Got Feedback or Found a Bug?
+
+Open an issue here 👉 [GitHub Issues](https://github.com/prince0xdev/codesweep/issues)

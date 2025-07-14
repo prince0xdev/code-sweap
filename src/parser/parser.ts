@@ -253,6 +253,7 @@ export class Parser {
       "typescript",
       "typescriptreact",
       "vue",
+      "json",
       "svelte",
     ];
 

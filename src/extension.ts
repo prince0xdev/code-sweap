@@ -52,19 +52,29 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   const removeDebugLogsCommand = vscode.commands.registerCommand(
-  "codesweep.removeDebugLogs",
-  () => {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) return;
+    "codesweep.removeDebugLogs",
+    () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) {
+        return;
+      }
 
-    parser.SetRegex(editor, editor.document.languageId);
-    parser.FindDebugStatements(editor);
-    vscode.workspace.applyEdit(parser.edit);
-  }
-);
+      parser.SetRegex(editor, editor.document.languageId);
+      parser.FindDebugStatements(editor);
+      vscode.workspace.applyEdit(parser.edit);
+    }
+  );
+
+
+  const cleanCode = vscode.commands.registerCommand("codesweep.cleanCode", async () => {
+  await vscode.commands.executeCommand("codesweep.removeMultilineComments");
+  await vscode.commands.executeCommand("codesweep.removeDebugLogs");
+});
+
 
   // Push commands to context
   context.subscriptions.push(
+    cleanCode,
     removeAllCommentsCommand,
     removeSingleLineCommentsCommand,
     removeMultilineCommentsCommand,

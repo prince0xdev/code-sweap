@@ -32,6 +32,10 @@
     },
     "commands": [
       {
+        "command": "codesweep.cleanCode",
+        "title": "CodeSweep: Clean Code"
+      },
+      {
         "command": "codesweep.removeAllComments",
         "title": "CodeSweep: Remove All Comments"
       },
