@@ -40,6 +40,22 @@ Or install via the VS Code command palette:
 
 ---
 
+## 🖱️ Usage via menu clic droit (context menu)
+
+You can also run CodeSweep commands directly from the **right-click menu** inside your code editor.
+
+- Open a supported code file (e.g., `.js`, `.py`, `.java`, `.html`, etc.)
+- Right-click anywhere in the editor
+- Select one of the **CodeSweep** commands, like:
+  - **CodeSweep: Clean Code**
+  - **CodeSweep: Remove All Comments**
+  - **CodeSweep: Remove Single Line Comments**
+  - **CodeSweep: Remove Multiline Comments**
+  - **CodeSweep: Remove Debug Logs**
+
+This offers a quick and convenient way to clean your code without using the Command Palette.
+
+
 # 🧩 Available Commands
 
 CodeSweep offers 4 useful commands. You can access them all via the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac).

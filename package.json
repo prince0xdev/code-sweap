@@ -52,7 +52,36 @@
         "command": "codesweep.removeDebugLogs",
         "title": "CodeSweep: Remove Debug Logs"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "codesweep.cleanCode",
+          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell/",
+          "group": "navigation"
+        },
+        {
+          "command": "codesweep.removeAllComments",
+          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell/",
+          "group": "navigation"
+        },
+        {
+          "command": "codesweep.removeSingleLineComments",
+          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell/",
+          "group": "navigation"
+        },
+        {
+          "command": "codesweep.removeMultilineComments",
+          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell/",
+          "group": "navigation"
+        },
+        {
+          "command": "codesweep.removeDebugLogs",
+          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell/",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
