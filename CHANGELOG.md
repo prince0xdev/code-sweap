@@ -4,6 +4,15 @@ All notable changes to **CodeSweep** will be documented in this file.
 
 ---
 
+
+## [0.0.5] - 2025-07-144
+
+| Type     | Description                                                                 | 👤 Thank To             |
+|----------|-----------------------------------------------------------------------------|-----------------------
+| 🐛 Fixed  | Fixe to support xml in editor context menu                             | [@prince0xdev](https://github.com/prince0xdev) |
+
+---
+
 ## [0.0.3] - 2025-07-14
 
 | Type     | Description                                                                 | 👤 Thank To             |

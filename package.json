@@ -7,7 +7,7 @@
     "url": "https://github.com/prince0xdev/code-sweap"
   },
   "description": "Remove and uncomment your code in one click. Supports multiple languages including HTML.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.101.0"
   },
@@ -57,27 +57,27 @@
       "editor/context": [
         {
           "command": "codesweep.cleanCode",
-          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell|dart/",
+          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell|dart|xml/",
           "group": "navigation"
         },
         {
           "command": "codesweep.removeAllComments",
-          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell|dart/",
+          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell|dart|xml/",
           "group": "navigation"
         },
         {
           "command": "codesweep.removeSingleLineComments",
-          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell|dart/",
+          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell|dart|xml/",
           "group": "navigation"
         },
         {
           "command": "codesweep.removeMultilineComments",
-          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell|dart/",
+          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell|dart|xml/",
           "group": "navigation"
         },
         {
           "command": "codesweep.removeDebugLogs",
-          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell|dart/",
+          "when": "editorLangId =~ /javascript|typescript|python|java|c|cpp|php|ruby|go|html|css|json|shellscript|powershell|dart|xml/",
           "group": "navigation"
         }
       ]
